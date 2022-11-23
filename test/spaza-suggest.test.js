@@ -5,7 +5,7 @@ const spazaSuggest =require('../spaza-suggest.js');
 const pgPromise = require('pg-promise');
 
 // const DATABASE_URL= process.env.DATABASE_URL || "postgresql://codex-coder:pg123@localhost:5432/spaza_suggest";
-const DATABASE_URL= process.env.DATABASE_URL || "postgresql://codex123@localhost:5432/spaza_suggest";
+const DATABASE_URL= process.env.DATABASE_URL || "postgresql://codex:codex123@localhost:5432/spaza_suggest";
 
 const config = { 
 	connectionString : DATABASE_URL
@@ -103,7 +103,7 @@ describe ("The smart spaza", function() {
         const suggestions = await spazasSuggest.suggestions(client.id);
 
         assert.equal(3, suggestions.length);
-        assert.equal('Nyanga East', suggestions[1].area_name);
+        assert.equal('Nyanga', suggestions[1].area_name);
 
     });
 

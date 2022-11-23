@@ -3,13 +3,13 @@ const flash = require('express-flash');
 const session = require('express-session');
 const exphbs = require("express-handlebars");
 const bodyParser = require('body-parser');
-const shop = require('./spaza-suggest');
+const shop = require('./spaza-suggest.js');
 
 
 const app = express();
 app.use(flash());
 
-
+const  shopinstance = shop();
 //database
 const pgp = require('pg-promise')({});
 
@@ -62,7 +62,7 @@ app.post('/sign',async function(req,res){
     let code = req.body.usercode
 
     if (user && surname && code){
-        await shop.clientLogin(user,surname,code)
+        await shopinstance.clientLogin(user,surname,code)
         req.flash('message', "Your details has been added !!")
     }else{
         console.log('customers')
@@ -92,7 +92,7 @@ app.post('/area',async function(req,res){
     let getdrink = req.body.drinks
     
     if(getfood && getdrink ){
-        await shop.suggestProduct(getfood,getdrink,)
+        await shop.suggestProduct(getfood,getdrink)
         req.flash('message', "You have choosen your suggested product !!")
     }else{
         console.log('')
