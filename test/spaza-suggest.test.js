@@ -11,11 +11,11 @@ const config = {
 }
 const pgp = pgPromise();
 
-// if (process.env.NODE_ENV == 'production') {
-// 	config.ssl = { 
-// 		rejectUnauthorized : false
-// 	}
-// }
+if (process.env.NODE_ENV == 'production') {
+	config.ssl = { 
+		rejectUnauthorized : false
+	}
+}
 
 const db = pgp(config);
 const spazaSuggest = SpazaSuggest(db);
