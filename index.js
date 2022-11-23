@@ -86,6 +86,27 @@ app.post('/log',async function(req,res){
 });
 
 
+app.post('/area',async function(req,res){
+    
+    let getfood = req.body.foods
+    let getdrink = req.body.drinks
+    
+    if(getfood && getdrink ){
+        await shop.suggestProduct(getfood,getdrink,)
+        req.flash('message', "You have choosen your suggested product !!")
+    }else{
+        console.log('')
+    }
+   res.render('area')
+});
+
+app.get('/area',async function(req,res){
+
+   res.render('area')
+});
+
+
+
 
 const PORT = process.env.PORT || 2000;
 

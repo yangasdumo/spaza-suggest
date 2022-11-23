@@ -1,10 +1,11 @@
-import assert from 'assert';
 
-import SpazaSuggest from '../spaza-suggest.js';
-import pgPromise from 'pg-promise';
+const  assert = require('assert');
+
+const spazaSuggest =require('../spaza-suggest.js');
+const pgPromise = require('pg-promise');
 
 // const DATABASE_URL= process.env.DATABASE_URL || "postgresql://codex-coder:pg123@localhost:5432/spaza_suggest";
-const DATABASE_URL= process.env.DATABASE_URL || "postgresql://zuggs:suggest123@localhost:5432/spaza_suggest";
+const DATABASE_URL= process.env.DATABASE_URL || "postgresql://codex123@localhost:5432/spaza_suggest";
 
 const config = { 
 	connectionString : DATABASE_URL
@@ -18,7 +19,7 @@ if (process.env.NODE_ENV == 'production') {
 }
 
 const db = pgp(config);
-const spazaSuggest = SpazaSuggest(db);
+const spazasSuggest = spazaSuggest(db);
 
 describe ("The smart spaza", function() {
 
@@ -33,34 +34,34 @@ describe ("The smart spaza", function() {
 
     it("should be able to list areas", async function() {
         
-        const areas = await spazaSuggest.areas();
+        const areas = await spazasSuggest.areas();
         assert.equal(5, areas.length);
         assert.equal('Khayelitsa - Site C', areas[2].area_name);
 
     });
 
     it("should be able to create a Spaza User and return a code", async function() {
-        const code = await spazaSuggest.registerClient('spazani');
+        const code = await spazasSuggest.registerClient('spazani');
         assert.ok(code);
     });
 
     it("should be able to find  a user using a code", async function() {
-        const code = await spazaSuggest.registerClient('spazani');
-        const client = await spazaSuggest.clientLogin(code);
+        const code = await spazasSuggest.registerClient('spazani');
+        const client = await spazasSuggest.clientLogin(code);
         assert.equal('spazani', client.username);
     });
 
     it("should be able to suggest a product for an area", async function() {
 
-        const code = await spazaSuggest.registerClient('spazani');
-        const client = await spazaSuggest.clientLogin(code);
+        const code = await spazasSuggest.registerClient('spazani');
+        const client = await spazasSuggest.clientLogin(code);
 
-        const areas = await spazaSuggest.areas();
+        const areas = await spazasSuggest.areas();
         const area = areas[2];
 
-        await spazaSuggest.suggestProduct(area.id, client.id, 'Small Pizzas');
+        await spazasSuggest.suggestProduct(area.id, client.id, 'Small Pizzas');
 
-        const suggestions = await spazaSuggest.suggestionsForArea(area.id);
+        const suggestions = await spazasSuggest.suggestionsForArea(area.id);
 
         assert.equal('Small Pizzas', suggestions[0].product_name)
 
@@ -68,17 +69,17 @@ describe ("The smart spaza", function() {
 
     it("should be able to get all the suggestions for an area", async function() {
 
-        const code = await spazaSuggest.registerClient('spazani');
-        const client = await spazaSuggest.clientLogin(code);
+        const code = await spazasSuggest.registerClient('spazani');
+        const client = await spazasSuggest.clientLogin(code);
 
-        const area1 = await spazaSuggest.findAreaByName('Nyanga');
-        const area2 = await spazaSuggest.findAreaByName('Nyanga East');
+        const area1 = await spazasSuggest.findAreaByName('Nyanga');
+        const area2 = await spazasSuggest.findAreaByName('Nyanga East');
 
-        await spazaSuggest.suggestProduct(area1.id, client.id, 'Small Pizzas');
-        await spazaSuggest.suggestProduct(area2.id, client.id, 'Small Pizzas');
-        await spazaSuggest.suggestProduct(area1.id, client.id, 'Baked Beans');
+        await spazasSuggest.suggestProduct(area1.id, client.id, 'Small Pizzas');
+        await spazasSuggest.suggestProduct(area2.id, client.id, 'Small Pizzas');
+        await spazasSuggest.suggestProduct(area1.id, client.id, 'Baked Beans');
 
-        const suggestions = await spazaSuggest.suggestionsForArea(area1.id);
+        const suggestions = await spazasSuggest.suggestionsForArea(area1.id);
 
         assert.equal(2, suggestions.length);
         assert.equal('Small Pizzas', suggestions[0].product_name);
@@ -89,17 +90,17 @@ describe ("The smart spaza", function() {
 
     it("should be able to get all the suggestions made by a client", async function() {
 
-        const code = await spazaSuggest.registerClient('spazani');
-        const client = await spazaSuggest.clientLogin(code);
+        const code = await spazasSuggest.registerClient('spazani');
+        const client = await spazasSuggest.clientLogin(code);
 
-        const area1 = await spazaSuggest.findAreaByName('Nyanga');
-        const area2 = await spazaSuggest.findAreaByName('Nyanga East');
+        const area1 = await spazasSuggest.findAreaByName('Nyanga');
+        const area2 = await spazasSuggest.findAreaByName('Nyanga East');
 
-        await spazaSuggest.suggestProduct(area1.id, client.id, 'Small Pizzas');
-        await spazaSuggest.suggestProduct(area2.id, client.id, 'Small Pizzas');
-        await spazaSuggest.suggestProduct(area1.id, client.id, 'Baked Beans');
+        await spazasSuggest.suggestProduct(area1.id, client.id, 'Small Pizzas');
+        await spazasSuggest.suggestProduct(area2.id, client.id, 'Small Pizzas');
+        await spazasSuggest.suggestProduct(area1.id, client.id, 'Baked Beans');
 
-        const suggestions = await spazaSuggest.suggestions(client.id);
+        const suggestions = await spazasSuggest.suggestions(client.id);
 
         assert.equal(3, suggestions.length);
         assert.equal('Nyanga East', suggestions[1].area_name);
@@ -107,41 +108,41 @@ describe ("The smart spaza", function() {
     });
 
     it("should be able to create a new Spaza shop", async function(){
-        const area = await spazaSuggest.findAreaByName('Nyanga');
-        const code = await spazaSuggest.registerSpaza('Spaza 101', area.id);
+        const area = await spazasSuggest.findAreaByName('Nyanga');
+        const code = await spazasSuggest.registerSpaza('Spaza 101', area.id);
         assert.ok(code);
     });
 
     it("should be able to find a spaza shop using a code", async function(){
 
-        const area = await spazaSuggest.findAreaByName('Nyanga')
-        const code = await spazaSuggest.registerSpaza('Spaza 101', area.id);
-        const spaza = await spazaSuggest.spazaLogin(code);
+        const area = await spazasSuggest.findAreaByName('Nyanga')
+        const code = await spazasSuggest.registerSpaza('Spaza 101', area.id);
+        const spaza = await spazasSuggest.spazaLogin(code);
         assert.equal('Spaza 101', spaza.shop_name);
     });
 
     it("should be able to accept a suggestion", async function(){
 
-        const code = await spazaSuggest.registerClient('spazani');
-        const client = await spazaSuggest.clientLogin(code);
+        const code = await spazasSuggest.registerClient('spazani');
+        const client = await spazasSuggest.clientLogin(code);
 
-        const area1 = await spazaSuggest.findAreaByName('Nyanga');
-        const area2 = await spazaSuggest.findAreaByName('Nyanga East');
+        const area1 = await spazasSuggest.findAreaByName('Nyanga');
+        const area2 = await spazasSuggest.findAreaByName('Nyanga East');
 
-        await spazaSuggest.suggestProduct(area1.id, client.id, 'Small Pizzas');
-        await spazaSuggest.suggestProduct(area2.id, client.id, 'Small Pizzas');
-        await spazaSuggest.suggestProduct(area1.id, client.id, 'Baked Beans');
+        await spazasSuggest.suggestProduct(area1.id, client.id, 'Small Pizzas');
+        await spazasSuggest.suggestProduct(area2.id, client.id, 'Small Pizzas');
+        await spazasSuggest.suggestProduct(area1.id, client.id, 'Baked Beans');
 
-        const spazaCode = await spazaSuggest.registerSpaza('Spaza 101', area1.id);
-        const spaza = await spazaSuggest.spazaLogin(spazaCode);
+        const spazaCode = await spazasSuggest.registerSpaza('Spaza 101', area1.id);
+        const spaza = await spazasSuggest.spazaLogin(spazaCode);
         assert.equal('Spaza 101', spaza.shop_name);
 
-        const suggestions = await spazaSuggest.suggestionsForArea(area1.id);
+        const suggestions = await spazasSuggest.suggestionsForArea(area1.id);
 
-        await spazaSuggest.acceptSuggestion(suggestions[0].id, spaza.id);
-        await spazaSuggest.acceptSuggestion(suggestions[0].id, spaza.id);
+        await spazasSuggest.acceptSuggestion(suggestions[0].id, spaza.id);
+        await spazasSuggest.acceptSuggestion(suggestions[0].id, spaza.id);
         
-        const acceptedBySpaza = await spazaSuggest.acceptedSuggestions(spaza.id);
+        const acceptedBySpaza = await spazasSuggest.acceptedSuggestions(spaza.id);
 
         assert.equal(1, acceptedBySpaza.length);
 

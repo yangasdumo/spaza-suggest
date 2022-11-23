@@ -1,9 +1,9 @@
-// import ShortUniqueId from 'short-unique-id';
+const ShortUniqueId = require('short-unique-id');
 
 module.exports = function SpazaSuggest (db){
 
     const uid = new ShortUniqueId({ length: 5 });
-
+   
     //// returns client code
     async function registerClient(username){
         // get the code
